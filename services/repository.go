@@ -1,6 +1,6 @@
 package services
 
-import "beta/models"
+import "xchat/models"
 
 type UsersRepository interface {
 	UserExistsByUsername(username string) (bool, error)

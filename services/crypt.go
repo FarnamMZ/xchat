@@ -1,9 +1,9 @@
 package services
 
 import (
-	"beta/handlers"
 	"golang.org/x/crypto/bcrypt"
 	"strings"
+	"xchat/handlers"
 )
 
 type cryptService struct{}

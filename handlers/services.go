@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"beta/dto"
-	"beta/models"
+	"xchat/dto"
+	"xchat/models"
 )
 
 type AuthService interface {

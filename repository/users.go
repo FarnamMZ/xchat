@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"beta/models"
-	"beta/services"
 	"database/sql"
+	"xchat/models"
+	"xchat/services"
 )
 
 type usersRepository struct {

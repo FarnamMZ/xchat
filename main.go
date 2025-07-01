@@ -1,13 +1,13 @@
 package main
 
 import (
-	"beta/handlers"
-	"beta/repository"
-	"beta/services"
 	"database/sql"
 	_ "github.com/lib/pq" // PostgresSQL driver
 	"log"
 	"net/http"
+	"xchat/handlers"
+	"xchat/repository"
+	"xchat/services"
 )
 
 func main() {

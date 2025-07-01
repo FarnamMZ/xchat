@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"beta/dto"
 	"errors"
 	"net/http"
+	"xchat/dto"
 )
 
 func (m *Mux) signup(w http.ResponseWriter, r *http.Request) {

@@ -1,11 +1,11 @@
 package services
 
 import (
-	"beta/dto"
-	"beta/handlers"
-	"beta/models"
 	"github.com/golang-jwt/jwt"
 	"time"
+	"xchat/dto"
+	"xchat/handlers"
+	"xchat/models"
 )
 
 type authService struct {
