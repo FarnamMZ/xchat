@@ -23,4 +23,10 @@ var (
 		StatusCode: http.StatusConflict,
 		Message:    "Email already exists",
 	}
+
+	// ErrInsecurePassword is returned when the provided password does not meet security requirements.
+	ErrInsecurePassword = &HTTPError{
+		StatusCode: http.StatusBadRequest,
+		Message:    "Password is not secure enough",
+	}
 )

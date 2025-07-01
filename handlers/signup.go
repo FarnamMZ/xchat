@@ -8,8 +8,23 @@ import (
 
 func (m *Mux) signup(w http.ResponseWriter, r *http.Request) {
 	var req dto.SignupReq
-	if err := m.decodeJSONBody(r, &req); err != nil {
+	err := m.decodeJSONBody(r, &req)
+	if err != nil {
 		m.respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// check if password is strong
+	if !m.cs.IsPasswordSecure(req.Password) {
+		httpErr := ErrInsecurePassword
+		m.respondWithError(w, httpErr.StatusCode, httpErr.Message)
+		return
+	}
+
+	// hash password
+	req.Password, err = m.cs.HashPassword(req.Password)
+	if err != nil {
+		m.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
