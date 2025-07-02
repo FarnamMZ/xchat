@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"xchat/models"
 	"xchat/services"
 )
@@ -34,11 +35,26 @@ func (ur *usersRepository) UserExistsByEmail(emil string) (bool, error) {
 	return exists, nil
 }
 
-func (ur *usersRepository) SaveUser(user models.User) error {
+func (ur *usersRepository) SaveUser(user *models.User) error {
 	query := `INSERT INTO users (username, password, email, role) VALUES ($1, $2, $3, $4)`
 	_, err := ur.db.Exec(query, user.Username, user.Password, user.Email, user.Role)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (ur *usersRepository) GetUserByUsername(username string) (*models.User, error) {
+	query := `SELECT username, password, email, role FROM users WHERE username = $1`
+	row := ur.db.QueryRow(query, username)
+
+	var user models.User
+	err := row.Scan(&user.Username, &user.Password, &user.Email, &user.Role)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil // User not found
+		}
+		return nil, err // Other error
+	}
+	return &user, nil
 }

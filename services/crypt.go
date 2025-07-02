@@ -3,27 +3,19 @@ package services
 import (
 	"golang.org/x/crypto/bcrypt"
 	"strings"
-	"xchat/handlers"
 )
 
-type cryptService struct{}
-
-// NewCryptService creates a new instance of CryptService
-func NewCryptService() handlers.CryptService {
-	return &cryptService{}
-}
-
-func (cs *cryptService) HashPassword(password string) (string, error) {
+func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
 
-func (cs *cryptService) ComparePassword(hashed, password string) bool {
+func comparePassword(hashed, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
 	return err == nil
 }
 
-func (cs *cryptService) IsPasswordSecure(password string) bool {
+func isPasswordSecure(password string) bool {
 	// password should be at least 8 characters long and 50 characters max
 	// password should contain at least one uppercase letter, one lowercase letter, one number, and one special character
 	if len(password) < 8 || len(password) > 50 {

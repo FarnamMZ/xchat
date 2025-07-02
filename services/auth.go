@@ -21,7 +21,7 @@ func NewAuthService(secret []byte, ur UsersRepository) handlers.AuthService {
 	}
 }
 
-func (as *authService) GenerateToken(claims models.Claims) (string, error) {
+func (as *authService) GenerateToken(claims *models.Claims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(as.secret)
 	if err != nil {
@@ -30,7 +30,7 @@ func (as *authService) GenerateToken(claims models.Claims) (string, error) {
 	return tokenString, nil
 }
 
-func (as *authService) Signup(req dto.SignupReq) (string, error) {
+func (as *authService) Signup(req *dto.SignupReq) (string, error) {
 	exists, err := as.ur.UserExistsByUsername(req.Username)
 	if err != nil {
 		return "", err
@@ -47,6 +47,17 @@ func (as *authService) Signup(req dto.SignupReq) (string, error) {
 		return "", handlers.ErrEmailAlreadyExists
 	}
 
+	// check if password is strong
+	if !isPasswordSecure(req.Password) {
+		return "", handlers.ErrInsecurePassword
+	}
+
+	// hash password
+	req.Password, err = hashPassword(req.Password)
+	if err != nil {
+		return "", err
+	}
+
 	user := models.User{
 		Username: req.Username,
 		Password: req.Password,
@@ -54,7 +65,7 @@ func (as *authService) Signup(req dto.SignupReq) (string, error) {
 		Role:     models.UserRole, // Default role
 	}
 
-	err = as.ur.SaveUser(user)
+	err = as.ur.SaveUser(&user)
 	if err != nil {
 		return "", err
 	}
@@ -70,7 +81,39 @@ func (as *authService) Signup(req dto.SignupReq) (string, error) {
 			Issuer:    "beta_service",
 		},
 	}
-	token, err := as.GenerateToken(claims)
+	token, err := as.GenerateToken(&claims)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+func (as *authService) Login(req *dto.LoginReq) (string, error) {
+	user, err := as.ur.GetUserByUsername(req.Username)
+	if err != nil {
+		return "", err
+	}
+	if user == nil {
+		return "", handlers.ErrUserDoesntExist
+	}
+
+	if !comparePassword(user.Password, req.Password) {
+		return "", handlers.ErrIncorrectPassword
+	}
+
+	claims := models.Claims{
+		Username: user.Username,
+		Email:    user.Email,
+		Role:     user.Role,
+		StandardClaims: jwt.StandardClaims{
+			// 1 hour expiration
+			ExpiresAt: jwt.TimeFunc().Add(1 * time.Hour).Unix(),
+			IssuedAt:  jwt.TimeFunc().Unix(),
+			Issuer:    "beta_service",
+		},
+	}
+	token, err := as.GenerateToken(&claims)
 	if err != nil {
 		return "", err
 	}

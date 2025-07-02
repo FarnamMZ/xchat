@@ -28,10 +28,9 @@ func main() {
 
 	// Initialize the services.
 	authService := services.NewAuthService([]byte("my_secret_key"), usersRepository)
-	cryptService := services.NewCryptService()
 
 	// Initialize the HTTP multiplexer with services.
-	mux := handlers.NewMux(authService, cryptService)
+	mux := handlers.NewMux(authService)
 
 	// Set up the HTTP server.
 	server := http.Server{

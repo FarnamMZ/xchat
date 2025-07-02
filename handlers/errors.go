@@ -29,4 +29,16 @@ var (
 		StatusCode: http.StatusBadRequest,
 		Message:    "Password is not secure enough",
 	}
+
+	// ErrUserDoesntExist is returned when the user does not exist in database.
+	ErrUserDoesntExist = &HTTPError{
+		StatusCode: http.StatusNotFound,
+		Message:    "User does not exist",
+	}
+
+	// ErrIncorrectPassword is returned when the password is incorrect.
+	ErrIncorrectPassword = &HTTPError{
+		StatusCode: http.StatusUnauthorized,
+		Message:    "Incorrect password",
+	}
 )

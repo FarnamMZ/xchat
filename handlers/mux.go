@@ -8,14 +8,12 @@ import (
 type Mux struct {
 	ServeMux *http.ServeMux
 	as       AuthService
-	cs       CryptService
 }
 
-func NewMux(as AuthService, cs CryptService) *Mux {
+func NewMux(as AuthService) *Mux {
 	m := &Mux{
 		ServeMux: http.NewServeMux(),
 		as:       as,
-		cs:       cs,
 	}
 
 	// Register the authentication handlers.
