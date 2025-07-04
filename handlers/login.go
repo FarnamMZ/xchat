@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"time"
 	"xchat/dto"
 )
 
@@ -25,5 +26,14 @@ func (m *Mux) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.respondWithJSON(w, http.StatusOK, map[string]string{"token": token})
+	cookie := http.Cookie{
+		Name: "token",
+		Value: token,
+		// max age is 10 minutes for now
+		MaxAge: int(time.Minute * 10),
+		Expires: time.Now().Add(time.Minute * 10),
+		Secure: true,
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &cookie)
 }

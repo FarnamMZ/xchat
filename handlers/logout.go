@@ -8,7 +8,7 @@ import (
 func (m *Mux) logout(w http.ResponseWriter, r *http.Request) {
 	// clear the session cookie
 	cookie := http.Cookie{
-		Name: "session",
+		Name: "token",
 		Value: "",
 		MaxAge: -1,
 		Expires: time.Unix(1, 0),
