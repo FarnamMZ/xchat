@@ -1,9 +1,19 @@
 package handlers
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 func (m *Mux) logout(w http.ResponseWriter, r *http.Request) {
-	// Clear the session or authentication token here.
-	// This is a placeholder implementation.
-	w.Write([]byte("logout\n"))
+	// clear the session cookie
+	cookie := http.Cookie{
+		Name: "session",
+		Value: "",
+		MaxAge: -1,
+		Expires: time.Unix(1, 0),
+		Secure: true,
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &cookie)
 }
