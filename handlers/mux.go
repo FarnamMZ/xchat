@@ -2,17 +2,20 @@ package handlers
 
 import (
 	"net/http"
+	"xchat/config"
 )
 
 // Mux is a custom HTTP multiplexer that handles routing for the application.
 type Mux struct {
 	ServeMux *http.ServeMux
+	cfg      *config.Config
 	as       AuthService
 }
 
-func NewMux(as AuthService) *Mux {
+func NewMux(cfg *config.Config, as AuthService) *Mux {
 	m := &Mux{
 		ServeMux: http.NewServeMux(),
+		cfg:      cfg,
 		as:       as,
 	}
 

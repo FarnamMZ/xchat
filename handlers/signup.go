@@ -26,13 +26,13 @@ func (m *Mux) signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	age := m.cfg.Jwt.TokenAge
 	cookie := http.Cookie{
-		Name: "token",
-		Value: token,
-		// max age is 10 minutes for now
-		MaxAge: int(time.Minute * 10),
-		Expires: time.Now().Add(time.Minute * 10),
-		Secure: true,
+		Name:     "token",
+		Value:    token,
+		MaxAge:   int(time.Minute) * age,
+		Expires:  time.Now().Add(time.Minute * time.Duration(age)),
+		Secure:   true,
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &cookie)

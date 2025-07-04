@@ -2,7 +2,10 @@
 .idea
 .vscode
 
+# config files
+config/config.yaml
+
+# test files
 *.sql
 *.http
-
 http

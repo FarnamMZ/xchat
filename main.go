@@ -2,17 +2,25 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/lib/pq" // PostgresSQL driver
 	"log"
 	"net/http"
+	"xchat/config"
 	"xchat/handlers"
 	"xchat/repository"
 	"xchat/services"
 )
 
 func main() {
+	// Get config struct
+	cfg, err := config.GetConfig("./config/config.yaml")
+	if err != nil {
+		log.Fatalf("Couldn't get config from configfile: %s", err)
+	}
+
 	// Connect to the database.
-	db, err := connectToDB()
+	db, err := connectToDB(cfg)
 	if err != nil {
 		log.Fatalf("Couldn't connect to database: %s", err)
 	}
@@ -27,10 +35,10 @@ func main() {
 	usersRepository := repository.NewUsersRepository(db)
 
 	// Initialize the services.
-	authService := services.NewAuthService([]byte("my_secret_key"), usersRepository)
+	authService := services.NewAuthService([]byte(cfg.Jwt.Secret), usersRepository)
 
 	// Initialize the HTTP multiplexer with services.
-	mux := handlers.NewMux(authService)
+	mux := handlers.NewMux(cfg, authService)
 
 	// Set up the HTTP server.
 	server := http.Server{
@@ -44,9 +52,10 @@ func main() {
 	}
 }
 
-// connectToDB establishes a connection to the PostgreSQL database and returns the database handle.
-func connectToDB() (*sql.DB, error) {
-	db, err := sql.Open("postgres", "user=farnammrz password=1122 dbname=beta sslmode=disable")
+// connectToDB establishes a connection to the PostgresSQL database and returns the database handle.
+func connectToDB(cfg *config.Config) (*sql.DB, error) {
+	dbCfg := cfg.Database
+	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", dbCfg.User, dbCfg.Password, dbCfg.Dbname))
 	if err != nil {
 		return nil, err
 	}
