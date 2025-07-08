@@ -23,6 +23,7 @@ func NewMux(cfg *config.Config, as AuthService) *Mux {
 	m.ServeMux.HandleFunc("/signup", m.signup)
 	m.ServeMux.HandleFunc("/login", m.login)
 	m.ServeMux.HandleFunc("/logout", m.logout)
+	m.ServeMux.HandleFunc("/refresh", m.refreshToken)
 
 	return m
 }

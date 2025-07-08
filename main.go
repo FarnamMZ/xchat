@@ -3,13 +3,14 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq" // PostgresSQL driver
 	"log"
 	"net/http"
 	"xchat/config"
 	"xchat/handlers"
 	"xchat/repository"
 	"xchat/services"
+
+	_ "github.com/lib/pq" // PostgresSQL driver
 )
 
 func main() {
@@ -33,9 +34,10 @@ func main() {
 
 	// Initialize the repositories.
 	usersRepository := repository.NewUsersRepository(db)
+	jwtRepository := repository.NewJwtRepository(db)
 
 	// Initialize the services.
-	authService := services.NewAuthService([]byte(cfg.Jwt.Secret), usersRepository)
+	authService := services.NewAuthService(cfg, []byte(cfg.Jwt.Secret), usersRepository, jwtRepository)
 
 	// Initialize the HTTP multiplexer with services.
 	mux := handlers.NewMux(cfg, authService)

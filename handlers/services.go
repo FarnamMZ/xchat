@@ -2,11 +2,15 @@ package handlers
 
 import (
 	"xchat/dto"
-	"xchat/models"
+
+	"github.com/golang-jwt/jwt"
 )
 
 type AuthService interface {
-	GenerateToken(claims *models.Claims) (string, error)
-	Signup(req *dto.SignupReq) (string, error)
-	Login(req *dto.LoginReq) (string, error)
+	GenerateToken(claims jwt.Claims) (string, error)
+	// Returning access token and a refresh token: at & rt strings.
+	Signup(req *dto.SignupReq) (at, rt string, err error)
+	Login(req *dto.LoginReq) (at, rt string, err error)
+	RefreshToken(refreshToken string) (at, rt string, err error)
+	DeleteRefreshToken(jti string) error
 }

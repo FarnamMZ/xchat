@@ -15,7 +15,7 @@ func (m *Mux) signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := m.as.Signup(&req)
+	at, rt, err := m.as.Signup(&req)
 	if err != nil {
 		var httpErr *HTTPError
 		if errors.As(err, &httpErr) {
@@ -26,14 +26,26 @@ func (m *Mux) signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	age := m.cfg.Jwt.TokenAge
-	cookie := http.Cookie{
+	atAge := m.cfg.Jwt.TokenAge
+	atCookie := http.Cookie{
 		Name:     "token",
-		Value:    token,
-		MaxAge:   int(time.Minute) * age,
-		Expires:  time.Now().Add(time.Minute * time.Duration(age)),
+		Value:    at,
+		MaxAge:   int(time.Minute) * atAge,
+		Expires:  time.Now().Add(time.Minute * time.Duration(atAge)),
 		Secure:   true,
 		HttpOnly: true,
 	}
-	http.SetCookie(w, &cookie)
+
+	rtAge := m.cfg.Jwt.RefreshAge
+	rtCookie := http.Cookie{
+		Name:     "refresh",
+		Value:    rt,
+		MaxAge:   int(time.Minute) * rtAge,
+		Expires:  time.Now().Add(time.Minute * time.Duration(rtAge)),
+		Secure:   true,
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, &atCookie)
+	http.SetCookie(w, &rtCookie)
 }

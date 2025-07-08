@@ -41,4 +41,16 @@ var (
 		StatusCode: http.StatusUnauthorized,
 		Message:    "Incorrect password",
 	}
+
+	// ErrInvalidToken is returned when the token is invalid or malformed.
+	ErrInvalidToken = &HTTPError{
+		StatusCode: http.StatusUnauthorized,
+		Message:    "Invalid token",
+	}
+
+	// ErrTokenExpired is returned when the token has expired.
+	ErrTokenExpired = &HTTPError{
+		StatusCode: http.StatusUnauthorized,
+		Message:    "Token has expired",
+	}
 )

@@ -4,18 +4,24 @@ import (
 	"errors"
 	"net/http"
 	"time"
-	"xchat/dto"
 )
 
-func (m *Mux) login(w http.ResponseWriter, r *http.Request) {
-	var req dto.LoginReq
-	err := m.decodeJSONBody(r, &req)
+func (m *Mux) refreshToken(w http.ResponseWriter, r *http.Request) {
+	// Get refresh token from cookie
+	cookie, err := r.Cookie("refresh")
 	if err != nil {
-		m.respondWithError(w, http.StatusBadRequest, err.Error())
+		m.respondWithError(w, http.StatusUnauthorized, "Refresh token not found")
 		return
 	}
 
-	at, rt, err := m.as.Login(&req)
+	refreshToken := cookie.Value
+	if refreshToken == "" {
+		m.respondWithError(w, http.StatusUnauthorized, "Refresh token is empty")
+		return
+	}
+
+	// Use the auth service to refresh the token
+	at, rt, err := m.as.RefreshToken(refreshToken)
 	if err != nil {
 		var httpErr *HTTPError
 		if errors.As(err, &httpErr) {
@@ -26,6 +32,7 @@ func (m *Mux) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Set new tokens as cookies
 	atAge := m.cfg.Jwt.TokenAge
 	atCookie := http.Cookie{
 		Name:     "token",
@@ -48,4 +55,6 @@ func (m *Mux) login(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &atCookie)
 	http.SetCookie(w, &rtCookie)
+
+	w.WriteHeader(http.StatusOK)
 }
