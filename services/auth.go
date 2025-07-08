@@ -86,7 +86,7 @@ func (as *authService) Signup(req *dto.SignupReq) (at, rt string, err error) {
 			Subject:   strconv.Itoa(user.ID), // Use user ID as subject
 			ExpiresAt: jwt.TimeFunc().Add(time.Duration(as.cfg.Jwt.TokenAge) * time.Minute).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
-			Issuer:    "beta_service",
+			Issuer:    as.cfg.Jwt.Iss,
 		},
 	}
 	at, err = as.GenerateToken(&ATClaims)
@@ -101,7 +101,7 @@ func (as *authService) Signup(req *dto.SignupReq) (at, rt string, err error) {
 			Subject:   strconv.Itoa(user.ID), // Use user ID as subject
 			ExpiresAt: jwt.TimeFunc().Add(time.Duration(as.cfg.Jwt.RefreshAge) * time.Minute).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
-			Issuer:    "beta_service",
+			Issuer:    as.cfg.Jwt.Iss,
 		},
 	}
 	rt, err = as.GenerateToken(&RTClaims)
@@ -145,7 +145,7 @@ func (as *authService) Login(req *dto.LoginReq) (at, rt string, err error) {
 			Subject:   strconv.Itoa(user.ID), // Use user ID as subject
 			ExpiresAt: jwt.TimeFunc().Add(time.Duration(as.cfg.Jwt.TokenAge) * time.Minute).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
-			Issuer:    "beta_service",
+			Issuer:    as.cfg.Jwt.Iss,
 		},
 	}
 	at, err = as.GenerateToken(&ATClaims)
@@ -160,7 +160,7 @@ func (as *authService) Login(req *dto.LoginReq) (at, rt string, err error) {
 			Subject:   strconv.Itoa(user.ID), // Use user ID as subject
 			ExpiresAt: jwt.TimeFunc().Add(time.Duration(as.cfg.Jwt.RefreshAge) * time.Minute).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
-			Issuer:    "beta_service",
+			Issuer:    as.cfg.Jwt.Iss,
 		},
 	}
 	rt, err = as.GenerateToken(&RTClaims)
@@ -243,7 +243,7 @@ func (as *authService) RefreshToken(refreshToken string) (at, rt string, err err
 			Subject:   strconv.Itoa(user.ID),
 			ExpiresAt: jwt.TimeFunc().Add(time.Duration(as.cfg.Jwt.TokenAge) * time.Minute).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
-			Issuer:    "beta_service",
+			Issuer:    as.cfg.Jwt.Iss,
 		},
 	}
 	at, err = as.GenerateToken(&ATClaims)
@@ -258,7 +258,7 @@ func (as *authService) RefreshToken(refreshToken string) (at, rt string, err err
 			Subject:   strconv.Itoa(user.ID),
 			ExpiresAt: jwt.TimeFunc().Add(time.Duration(as.cfg.Jwt.RefreshAge) * time.Minute).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
-			Issuer:    "beta_service",
+			Issuer:    as.cfg.Jwt.Iss,
 		},
 	}
 	rt, err = as.GenerateToken(&RTClaims)

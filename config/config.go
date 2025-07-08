@@ -14,6 +14,7 @@ type Config struct {
 
 	Jwt struct {
 		Secret     string `yaml:"secret"`
+		Iss        string `yaml:"iss"`
 		TokenAge   int    `yaml:"tokenAge"`
 		RefreshAge int    `yaml:"refreshAge"`
 	} `yaml:"jwt"`
